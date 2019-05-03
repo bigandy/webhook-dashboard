@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 
-const bodyParser = require('body-parser');
-
 const http = require("http").Server(app);
 const io = require("socket.io")(http, { serveClient: true });
 const path = require("path");
@@ -10,23 +8,38 @@ const path = require("path");
 const { PORT } = require("./config");
 
 app.use(express.static("frontend/public"));
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.json());
+
+const ucFirst = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
 
 io.on("connection", socket => {
   socket.emit("server-status", "CONNECTED TO SERVER");
 
-	app.post('/webhook', function (req, res) {
-		if (req.headers['x-serene'] !== 'x-serene') {
-			res.status(200);
-		}
+  const people = ['andrew', 'ben', 'dan', 'marcus', 'rajinder'];
+  people.forEach(person => {
+    app.post(`/webhook/${person}`, (req, res) => {
+      console.log(req.body);
+      // if (req.headers['x-serene'] !== 'x-serene') {
+      //   res.status(200);
+      // }
 
-		const body = JSON.parse(Object.keys(req.body)[0]);
-		socket.broadcast.emit("serene-mode", body);
-	});
+      // const {sereneMode} = JSON.parse(Object.keys(req.body)[0]);
+
+      // const message = {
+      //   sereneMode,
+      //   'user': ucFirst(person),
+      // };
+
+      // console.log(message);
+      // socket.broadcast.emit("serene-mode", message);
+    });
+  });
 });
 
 http.listen(PORT, () => {
-  console.log(`Socket.io server up and running on port ${PORT}`);
+  console.log(`Socket.io server up and running on port http://localhost:${PORT}`);
 });
 
 app.get("/", function(req, res) {

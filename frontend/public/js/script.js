@@ -13,8 +13,10 @@ const findUserByUUID = uuid => {
 	return name;
 }
 
-socket.on('serene-mode', ({uuid, sereneMode}) => {
-	const user = findUserByUUID(uuid);
+socket.on('serene-mode', ({user, sereneMode}) => {
+	// const user = findUserByUUID(uuid);
+
+	console.log({user, sereneMode});
 
 	const nameDiv = [...sereneModeDivs].filter(div => div.id === user)[0];
 
